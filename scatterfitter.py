@@ -37,7 +37,7 @@ def gaussian(rsqr, sigma, A):
     2D gaussian, but we assume it transforms as 1D Gaussian with radius from center and single sigma
     So we are really fitting 2D data to a 1D Gauss, where r*r = x*x + y*y
     """
-    return (A / (sigma * 2 * np.pi)) * np.exp(- rsqr/(sigma*sigma))
+    return (A / (sigma**2 * 2 * np.pi)) * np.exp(- rsqr/(sigma*sigma))
 
 
 def multi_gauss(rsqr, params):
@@ -85,10 +85,13 @@ def make_scatter_plot():
     return radii, vals
 
 
-# [1.12345079e+01 8.53551197e+07],15693218.868358668
-# [1.08207672e+01 8.50932965e+07 2.56767780e+01 2.20097802e+06],6510213.8494843375
-# [1.06933752e+01 8.42676274e+07 2.20956314e+01 3.32465669e+06  7.66777791e+01 7.92474078e+04],4833499.049764259
-params = [1.06933752e+01, 8.42676274e+07, 2.20956314e+01, 3.32465669e+06,  7.66777791e+01, 7.92474078e+04]
+# [1.12345079e+01 9.58922768e+08],15693218.86835867
+# [1.08207483e+01 9.20767764e+08 2.56762130e+01 5.65186091e+07],6510213.87314924
+# [1.07181042e+01 9.05804308e+08 2.26886486e+01 6.88118813e+07  8.24731128e+01 5.61262252e+06],4837986.627212546
+# [1.05377247e+01 8.23557276e+07 1.86380095e+01 5.33742117e+06 4.38545477e+01 2.75531134e+05 1.82795339e+02 1.67310713e+04],4081402.2629849515
+# [1.05357713e+01 8.23537029e+07 1.85982212e+01 5.33818541e+06 4.05107626e+01 2.75242403e+05 8.39473584e+01 2.81355032e+04 2.65996038e+02 1.04448512e+04],4035015.2437909436
+# [1.05362562e+01, 8.23554263e+07, 1.85514032e+01, 5.33488480e+06, 4.02583140e+01, 2.89389124e+05, 8.66094458e+01, 2.62153542e+04, 2.68955978e+02, 1.03075160e+04],4031452.2802090473
+params = [ 1.05261568e+01, 8.72872199e+08, 1.92035164e+01, 9.56196076e+07, 4.77387466e+01, 9.58393595e+06, 2.04397747e+02, 3.45646467e+06, 3.44612096e+03, 8.48815010e+04]
 
 # fit = make_fit(params)
 # plt.matshow(fit - data)
@@ -113,13 +116,14 @@ plt.plot(xs, ys, color='red')
 plt.yscale("log")
 plt.show()
 
-
-# Optimize with Nelder-Mead
-# result = minimize(chi_squared, params)
-result = minimize(chi_squared, params, method='Nelder-Mead')
-# result = minimize(chi_squared, params, method='SLSQP')
-if result.success:
-    fitted_params = result.x
-    print(fitted_params)
-else:
-    raise ValueError(result.message)
+while True:
+ result = minimize(chi_squared, params, method='Nelder-Mead')
+ # result = minimize(chi_squared, params)
+ # result = minimize(chi_squared, params, method='SLSQP')
+ if result.success:
+     fitted_params = result.x
+     print(fitted_params)
+     break
+ else:
+     print(result.message)
+     params = result.x

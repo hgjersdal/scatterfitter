@@ -12,12 +12,6 @@ def read_data():
         data = list(reader)
 
         data_array = np.array(data, dtype=float)
-
-        # d2 = data_array
-        # d2[d2>0] = 1
-        # plt.matshow(d2)
-        # plt.show()
-        
         return data_array[250:750, 250:750]
 
 data = read_data()
@@ -28,8 +22,6 @@ plt.show()
 # The Poisson variance is the expexted mean. The expected mean is the number of hits in the bin, or 1.
 var = data
 var[var<1] = 1
-# plt.matshow(var)
-# plt.show()
 
 
 def gaussian(rsqr, sigma, A):

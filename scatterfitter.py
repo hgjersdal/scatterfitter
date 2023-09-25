@@ -40,13 +40,23 @@ def multi_gauss(rsqr, params):
     return val
 
 
-def make_fit(params):
+def make_fit2(params):
     """ Make a matric from a set of gaussian parameters """
     fit = np.zeros(data.shape)
     for x in range(500):
         for y in range(500):
             rsq = (x-249.5)**2 + (y-249.5)**2
             fit[x, y] += multi_gauss(rsq, params)
+    return fit
+
+
+def make_fit(params):
+    """ Make a matric from a set of gaussian parameters """
+    x, y = data.shape
+    X, Y = np.ix_(np.arange(x), np.arange(y))
+    rsqs = (X-249.5)**2 + (Y-249.5)**2
+    vfunc = np.vectorize(lambda x: multi_gauss(x, params))
+    fit = vfunc(rsqs)
     return fit
 
 
@@ -105,9 +115,10 @@ params6 = [1.03820983e+01, 8.13167922e+08, 1.51130599e+01, 1.36396559e+08,
            2.49682972e+01, 2.90299120e+07, 2.83680246e+02, 2.79125608e+06,
            4.51206710e+01, 7.40459841e+06, 9.19499361e+01, 2.04799451e+06]  # 266179.14829355833
 
-params5 = [7.49590054e+00,  4.42254899e+08,  1.36589111e+01,  4.58340938e+07,
-           3.32713718e+01,  5.43017201e+06,  1.55192561e+02,  1.79415604e+06,
-           1.78379491e+02, 2.89999070e+05]
+params5 = [7.46811257e+00, 4.37921415e+08, 1.31558293e+01, 4.92052362e+07,
+           3.03388105e+01, 6.18073779e+06, 1.09783511e+02, 1.17969967e+06,
+           1.88718419e+02, 4.74452193e+05]
+
 
 params4 = [7.46823288e+00, 4.38245959e+08, 1.32290890e+01, 4.91958670e+07,
            3.11006356e+01, 5.99772212e+06, 1.29497860e+02, 1.52766408e+06]
@@ -127,6 +138,10 @@ converged_chi2s = [11892952.087187286,  # 1
                    272925.0193639359,  # 5
                    266179.14829355833  # 6
                    ]
+
+
+
+
 
 mult_gauss_plot(params6, xs, "6")
 mult_gauss_plot(params5, xs, "5")

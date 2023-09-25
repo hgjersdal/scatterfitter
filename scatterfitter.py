@@ -39,6 +39,16 @@ def multi_gauss(rsqr, params):
         val += gaussian(rsqr, params[i*2], params[i*2+1])
     return val
 
+def gauss_v(rsqrs, sigma, A):
+    return (A / (sigma**2 * 2 * np.pi)) * np.exp(- 0.5 * rsqrs/(sigma*sigma))
+
+def multi_gauss_v(rsqrs, params):
+    """ Several Gausses on top of each other """
+    fit = np.zeros(data.shape)
+    for i in range(len(params)//2):
+        fit = fit + gauss_v(rsqrs, params[i*2], params[i*2+1])
+    return fit
+
 
 def make_fit2(params):
     """ Make a matric from a set of gaussian parameters """
@@ -55,8 +65,9 @@ def make_fit(params):
     x, y = data.shape
     X, Y = np.ix_(np.arange(x), np.arange(y))
     rsqs = (X-249.5)**2 + (Y-249.5)**2
-    vfunc = np.vectorize(lambda x: multi_gauss(x, params))
-    fit = vfunc(rsqs)
+    # vfunc = np.vectorize(lambda x: multi_gauss(x, params))
+    # fit = vfunc(rsqs)
+    fit = multi_gauss_v(rsqs, params)
     return fit
 
 

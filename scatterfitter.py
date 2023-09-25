@@ -29,7 +29,7 @@ def gaussian(rsqr, sigma, A):
     2D gaussian, but we assume it transforms as 1D Gaussian with radius from center and single sigma
     So we are really fitting 2D data to a 1D Gauss, where r*r = x*x + y*y
     """
-    return (A / (sigma**2 * 2 * np.pi)) * np.exp(- rsqr/(sigma*sigma))
+    return (A / (sigma**2 * 2 * np.pi)) * np.exp(- 0.5 * rsqr/(sigma*sigma))
 
 
 def multi_gauss(rsqr, params):
@@ -67,15 +67,14 @@ def make_scatter_plot():
     index = 0
     for x in range(500):
         for y in range(500):
-            radius = math.sqrt((x-249)**2 + (y-249)**2)
-            if y < 249:
+            radius = math.sqrt((x-249.5)**2 + (y-249.5)**2)
+            if y < 249.5:
                 radius *= -1
             radii[index] = radius
             vals[index] = data[x, y]
             index += 1
             # print(str(radius) + ', ' + str(data[x, y]))
     return radii, vals
-
 
 
 # Make a scatterplot of the data
@@ -96,12 +95,38 @@ def mult_gauss_plot(params, xs, lbl):
 
 xs = np.linspace(-250, 250, 500)
 
-params6 = [1.03538463e+01, 8.03250571e+08, 1.50521177e+01, 1.38563360e+08, 2.48976758e+01, 2.92682121e+07, 2.83451220e+02, 2.79124680e+06, 4.50377575e+01, 7.44242623e+06, 9.18093612e+01, 2.05398347e+06]
-params5 = [1.04182992e+01, 8.30840063e+08, 1.63239725e+01, 1.24554259e+08,  3.08056288e+01, 2.05431747e+07, 2.34480576e+02, 2.80489374e+06,  6.61299463e+01, 4.24356058e+06]
-params4 = [1.05377247e+01, 8.67841985e+08, 1.86380093e+01, 9.94789108e+07, 4.38545434e+01, 1.20832954e+07, 1.82795365e+02, 3.05836237e+06]
-params3 = [1.06933752e+01, 9.01105354e+08, 2.20956316e+01, 7.34603862e+07, 7.66777886e+01, 6.07651451e+06]
-params2 = [1.08207672e+01, 9.20774754e+08, 2.56767779e+01, 5.65140248e+07]
-params1= [1.12345079e+01, 9.58922768e+08]
+params7 = [1.03820983e+01, 8.13167922e+08, 1.51130599e+01, 1.36396559e+08,
+           2.49682972e+01, 2.90299120e+07, 2.83680246e+02, 2.79125608e+06,
+           4.51206710e+01, 7.40459841e+06, 9.19499361e+01, 2.04799451e+06,
+           2.5e+02, 1.0e+04]
+
+
+params6 = [1.03820983e+01, 8.13167922e+08, 1.51130599e+01, 1.36396559e+08,
+           2.49682972e+01, 2.90299120e+07, 2.83680246e+02, 2.79125608e+06,
+           4.51206710e+01, 7.40459841e+06, 9.19499361e+01, 2.04799451e+06]  # 266179.14829355833
+
+params5 = [7.49590054e+00,  4.42254899e+08,  1.36589111e+01,  4.58340938e+07,
+           3.32713718e+01,  5.43017201e+06,  1.55192561e+02,  1.79415604e+06,
+           1.78379491e+02, 2.89999070e+05]
+
+params4 = [7.46823288e+00, 4.38245959e+08, 1.32290890e+01, 4.91958670e+07,
+           3.11006356e+01, 5.99772212e+06, 1.29497860e+02, 1.52766408e+06]
+
+
+params3 = [7.57809300e+00, 4.54852976e+08, 1.57231413e+01, 3.62236540e+07,
+           5.50432580e+01, 2.98460432e+06]
+
+params2 = [7.66518162e+00, 4.64364098e+08, 1.82200081e+01, 2.80289786e+07]
+
+params1 = [7.95378141e+00, 4.83261651e+08]
+
+converged_chi2s = [11892952.087187286,  # 1
+                   2761525.7670124862,  # 2
+                   1093369.2133564858,  # 3
+                   346589.4656824806,  # 4
+                   272925.0193639359,  # 5
+                   266179.14829355833  # 6
+                   ]
 
 mult_gauss_plot(params6, xs, "6")
 mult_gauss_plot(params5, xs, "5")
@@ -132,7 +157,22 @@ pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
 plt.show()
 
+fit = make_fit(params2)
+pulls = (fit - data)/np.sqrt(var)
+plt.matshow(pulls)
+plt.show()
+
 fit = make_fit(params3)
+pulls = (fit - data)/np.sqrt(var)
+plt.matshow(pulls)
+plt.show()
+
+fit = make_fit(params4)
+pulls = (fit - data)/np.sqrt(var)
+plt.matshow(pulls)
+plt.show()
+
+fit = make_fit(params5)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
 plt.show()
@@ -144,7 +184,10 @@ plt.show()
 
 
 
-params = params6
+params = params5
+
+
+print(data.sum())
 
 while True:
  result = minimize(chi_squared, params, method='Nelder-Mead')

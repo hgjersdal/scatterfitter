@@ -96,6 +96,17 @@ def mult_gauss_plot(params, xs, lbl):
 
 xs = np.linspace(-250, 250, 500)
 
+params9 = [7.31397824e+00, 3.95589817e+08, 1.00163493e+01, 6.97711870e+07,
+           1.46580089e+01, 1.95735384e+07, 2.26172498e+01, 5.94384224e+06,
+           3.26805036e+02, 1.55768256e+06, 3.59592494e+01, 2.19846207e+06,
+           6.13367912e+01, 7.74916190e+05, 1.20901197e+02, 6.01806166e+05,
+           4.0e+02, 1.0e+4]
+
+params8 = [7.31397824e+00, 3.95589817e+08, 1.00163493e+01, 6.97711870e+07,
+           1.46580089e+01, 1.95735384e+07, 2.26172498e+01, 5.94384224e+06,
+           3.26805036e+02, 1.55768256e+06, 3.59592494e+01, 2.19846207e+06,
+           6.13367912e+01, 7.74916190e+05, 1.20901197e+02, 6.01806166e+05]
+
 params7 = [7.31857717e+00, 3.97705056e+08, 1.01497237e+01, 7.01126668e+07,
            1.52928704e+01, 1.84648017e+07, 2.46103530e+01, 5.32810172e+06,
            2.26335109e+02, 1.41095479e+06, 4.11094881e+01, 1.80758619e+06,
@@ -126,10 +137,14 @@ converged_chi2s = [11892952.087187286,  # 1
                    346589.4656824806,  # 4
                    272925.0193639359,  # 5
                    266179.14829355833,  # 6
-                   265711.9130558083  # 7
+                   265711.9130558083,  # 7
+                   265686.9359480653,  # 8
+                   265686.935940192  # 9
                    ]
 
 
+mult_gauss_plot(params9, xs, "9")
+mult_gauss_plot(params8, xs, "8")
 mult_gauss_plot(params7, xs, "7")
 mult_gauss_plot(params6, xs, "6")
 mult_gauss_plot(params5, xs, "5")
@@ -144,6 +159,8 @@ plt.show()
 
 
 plt.plot(xs, data[249, :])
+mult_gauss_plot(params9, xs, "9")
+mult_gauss_plot(params8, xs, "8")
 mult_gauss_plot(params7, xs, "7")
 mult_gauss_plot(params6, xs, "6")
 mult_gauss_plot(params5, xs, "5")
@@ -160,42 +177,64 @@ plt.show()
 fit = make_fit(params1)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=1")
 plt.show()
 
 fit = make_fit(params2)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=2")
 plt.show()
 
 fit = make_fit(params3)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=3")
 plt.show()
 
 fit = make_fit(params4)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=4")
 plt.show()
 
 fit = make_fit(params5)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=5")
 plt.show()
 
 fit = make_fit(params6)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=6")
 plt.show()
 
 fit = make_fit(params7)
 pulls = (fit - data)/np.sqrt(var)
 plt.matshow(pulls)
+plt.title("N=7")
 plt.show()
 
-params = params7
+fit = make_fit(params8)
+pulls = (fit - data)/np.sqrt(var)
+plt.matshow(pulls)
+plt.title("N=8")
+plt.show()
+
+bins = np.arange(-5, 5.001, 0.1)
+counts, bins = np.histogram(pulls.ravel(), bins=bins)
+print(bins)
+print(counts.sum())
+plt.stairs(counts, bins)
+mult_gauss_plot([1.0, 500*500/math.sqrt(2*math.pi)], bins, "asdf")
+plt.show()
 
 
-while True:
+params = params9
+
+
+while False:
     result = minimize(chi_squared, params, method='Nelder-Mead')
     if result.success:
         fitted_params = result.x

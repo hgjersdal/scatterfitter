@@ -55,15 +55,35 @@ def make_fit(params):
     return fit
 
 
+def pearson_squared(params):
+    """
+    Neyman chi squared is squared residuals divided by the variance,
+    this is the function we want to optimize """
+    fit = make_fit(params)
+    chisq = (fit - data)**2/fit
+    summed = chisq.sum()
+    # print(str(params) + "," + str(summed))
+    return summed
+
+
 def chi_squared(params):
     """
-    chi squared is squared residuals divided by the variance,
+    Neyman chi squared is squared residuals divided by the variance,
     this is the function we want to optimize """
     fit = make_fit(params)
     chisq = (fit - data)**2/var
     summed = chisq.sum()
-    print(str(params) + "," + str(summed))
+    # print(str(params) + "," + str(summed))
     return summed
+
+
+def cousin_baker(params):
+    fit = make_fit(params)
+    residuals = (fit - data)
+    log_term = np.array(data, copy=True)
+    mask = log_term > 0
+    np.putmask(log_term, mask, data * np.log(data/fit))
+    return 2 * (residuals + log_term).sum()
 
 
 def make_scatter_plot():
@@ -143,103 +163,106 @@ converged_chi2s = [11892952.087187286,  # 1
                    ]
 
 
-mult_gauss_plot(params9, xs, "9")
-mult_gauss_plot(params8, xs, "8")
-mult_gauss_plot(params7, xs, "7")
-mult_gauss_plot(params6, xs, "6")
-mult_gauss_plot(params5, xs, "5")
-mult_gauss_plot(params4, xs, "4")
-mult_gauss_plot(params3, xs, "3")
-mult_gauss_plot(params2, xs, "2")
-mult_gauss_plot(params1, xs, "1")
+if False:
+    mult_gauss_plot(params9, xs, "9")
+    mult_gauss_plot(params8, xs, "8")
+    mult_gauss_plot(params7, xs, "7")
+    mult_gauss_plot(params6, xs, "6")
+    mult_gauss_plot(params5, xs, "5")
+    mult_gauss_plot(params4, xs, "4")
+    mult_gauss_plot(params3, xs, "3")
+    mult_gauss_plot(params2, xs, "2")
+    mult_gauss_plot(params1, xs, "1")
 
-plt.yscale("log")
-plt.legend()
-plt.show()
+    plt.yscale("log")
+    plt.legend()
+    plt.show()
 
+    plt.plot(xs, data[249, :])
+    mult_gauss_plot(params9, xs, "9")
+    mult_gauss_plot(params8, xs, "8")
+    mult_gauss_plot(params7, xs, "7")
+    mult_gauss_plot(params6, xs, "6")
+    mult_gauss_plot(params5, xs, "5")
+    mult_gauss_plot(params4, xs, "4")
+    mult_gauss_plot(params3, xs, "3")
+    mult_gauss_plot(params2, xs, "2")
+    mult_gauss_plot(params1, xs, "1")
+    plt.yscale("log")
+    plt.legend()
+    plt.show()
 
-plt.plot(xs, data[249, :])
-mult_gauss_plot(params9, xs, "9")
-mult_gauss_plot(params8, xs, "8")
-mult_gauss_plot(params7, xs, "7")
-mult_gauss_plot(params6, xs, "6")
-mult_gauss_plot(params5, xs, "5")
-mult_gauss_plot(params4, xs, "4")
-mult_gauss_plot(params3, xs, "3")
-mult_gauss_plot(params2, xs, "2")
-mult_gauss_plot(params1, xs, "1")
-plt.yscale("log")
-plt.legend()
-plt.show()
+    # Plot pull-values.
+    fit = make_fit(params1)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=1")
+    plt.show()
 
+    fit = make_fit(params2)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=2")
+    plt.show()
 
-# Plot pull-values.
-fit = make_fit(params1)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=1")
-plt.show()
+    fit = make_fit(params3)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=3")
+    plt.show()
 
-fit = make_fit(params2)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=2")
-plt.show()
+    fit = make_fit(params4)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=4")
+    plt.show()
 
-fit = make_fit(params3)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=3")
-plt.show()
+    fit = make_fit(params5)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=5")
+    plt.show()
 
-fit = make_fit(params4)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=4")
-plt.show()
+    fit = make_fit(params6)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=6")
+    plt.show()
 
-fit = make_fit(params5)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=5")
-plt.show()
+    fit = make_fit(params7)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=7")
+    plt.show()
 
-fit = make_fit(params6)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=6")
-plt.show()
+    fit = make_fit(params8)
+    pulls = (fit - data)/np.sqrt(var)
+    plt.matshow(pulls)
+    plt.title("N=8")
+    plt.show()
 
-fit = make_fit(params7)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=7")
-plt.show()
-
-fit = make_fit(params8)
-pulls = (fit - data)/np.sqrt(var)
-plt.matshow(pulls)
-plt.title("N=8")
-plt.show()
-
-bins = np.arange(-5, 5.001, 0.1)
-counts, bins = np.histogram(pulls.ravel(), bins=bins)
-print(bins)
-print(counts.sum())
-plt.stairs(counts, bins)
-mult_gauss_plot([1.0, 500*500/math.sqrt(2*math.pi)], bins, "asdf")
-plt.show()
-
-
-params = params9
+    bins = np.arange(-5, 5.001, 0.1)
+    counts, bins = np.histogram(pulls.ravel(), bins=bins)
+    print(bins)
+    print(counts.sum())
+    plt.stairs(counts, bins)
+    mult_gauss_plot([1.0, 500*500/math.sqrt(2*math.pi)], bins, "asdf")
+    plt.show()
 
 
-while False:
-    result = minimize(chi_squared, params, method='Nelder-Mead')
+params = params6
+
+print(params)
+while True:
+    result = minimize(pearson_squared, params)
     if result.success:
         fitted_params = result.x
         print(fitted_params)
+        print(result.fun)
         break
     else:
         print(result.message)
         params = result.x
+        print(result.fun)
+        print(params)
+        
